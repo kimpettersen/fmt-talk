@@ -17,6 +17,10 @@ func main() {
 	fmt.Println("\n##############################################################################################\n")
 	structs()
 	fmt.Println("\n##############################################################################################\n")
+	stringer()
+	fmt.Println("\n##############################################################################################\n")
+	goStringer()
+	fmt.Println("\n##############################################################################################\n")
 	numbers()
 	fmt.Println("\n##############################################################################################\n")
 	unicode()
@@ -82,25 +86,66 @@ func verbs() {
 type person struct {
 	name        string
 	age         int
-	nationality *string
+	nationality *nationality
 }
-
+type nationality struct {
+	countryCode string
+	name        string
+}
 func structs() {
 	var p person
 	fmt.Printf("Initialized: %v\n", p)
-
+	fmt.Printf("Type of p: %T\n", p)
 	p.name = "Kim"
 	p.age = 32
-
 	fmt.Printf("Declared: %v\n", p)
-	fmt.Printf("Type of p: %T\n", p)
-
 	fmt.Printf("Field names and values: %+v\n", p)
 	fmt.Printf("Type, field names and values: %#v\n", p)
 }
 
-func numbers() {
+type personWithStringer struct {
+	person
+}
 
+func (p personWithStringer) String() string {
+	return fmt.Sprintf("name: %s age: %d, nationality: %s", p.name, p.age, p.nationality.name)
+}
+
+func stringer() {
+	fmt.Println("Stringer is invoked when printing with %v")
+	p := personWithStringer{person{
+		name: "Kim",
+		age:  32,
+		nationality: &nationality{
+			countryCode: "NO",
+			name:        "norwegian",
+		},
+	}}
+	fmt.Printf("%v\n", p)
+}
+
+type personWithGoStringer struct {
+	person
+}
+
+func (p personWithGoStringer) GoString() string {
+	return fmt.Sprintf("personWithGoStringer{name: %s age: %d, nationality: %s}", p.name, p.age, p.nationality.name)
+}
+
+func goStringer() {
+	fmt.Println("GoStringer is invoked when printing with %#v")
+	p := personWithGoStringer{person{
+		name: "Kim",
+		age:  32,
+		nationality: &nationality{
+			countryCode: "NO",
+			name:        "norwegian",
+		},
+	}}
+	fmt.Printf("%#v\n", p)
+}
+
+func numbers() {
 	fmt.Printf("Base 2: %b\n", 255)
 	fmt.Printf("Base 2: %b\n", 0xff)
 
@@ -108,10 +153,7 @@ func numbers() {
 	fmt.Printf("Base 10: %d\n", 0b11111111)
 
 	fmt.Printf("Base 16: %X\n", 255)
-	fmt.Printf("Base 16: %x\n", 11111111)
-
 	fmt.Printf("Scientific notation: %e\n", 0.00000000001876)
-
 }
 func unicode() {
 	fmt.Printf("Unicode: %U\n", 32)
